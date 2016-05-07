@@ -4,8 +4,8 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerResponse;
-import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.handler.StaticHandler;
 
 public class Main extends AbstractVerticle {
 
@@ -13,8 +13,11 @@ public class Main extends AbstractVerticle {
 		HttpServer server = vertx.createHttpServer();
 		Router router = Router.router( vertx );
 		
-		Route route = router.route();
-		route.handler( rc -> {
+		router.route( "/webroot/*" ).handler( 
+			StaticHandler.create().setCachingEnabled( false ) 
+		);
+		
+		router.route( "/services/*" ).handler( rc -> {
 			HttpServerResponse hsr = rc.response();
 			hsr.putHeader( "content-type", "text/plain" );
 			hsr.end( "Vert.x is using WEB" );
